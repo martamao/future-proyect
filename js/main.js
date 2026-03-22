@@ -1,19 +1,20 @@
 "use strict";
 
-const petHunger = document.querySelector(".js_hunger");
-const petEnergy = document.querySelector(".js_energy");
-const petHappiness = document.querySelector(".js_happiness");
+const petVitality = document.querySelector(".js_vitality");
+const petStability = document.querySelector(".js_stability");
+const petConnection = document.querySelector(".js_connection");
 
-const feedBtn = document.querySelector(".js_feed");
-const playBtn = document.querySelector(".js_play");
-const sleepBtn = document.querySelector(".js_sleep");
+const stimulateBtn = document.querySelector(".js_stimulate");
+const doTasksBtn = document.querySelector(".js_doTasks");
+const connectBtn = document.querySelector(".js_connect");
 
 let pet = {
-  hunger: 100,
-  energy: 100,
-  happiness: 100,
+  vitality: 100,
+  stability: 100,
+  connection: 100,
   isAlive: true,
 };
+
 const savedPet = localStorage.getItem("pet");
 //hay algo guardado con la clave pet?”
 if (savedPet) {
@@ -22,57 +23,76 @@ if (savedPet) {
 }
 
 
-
 // actualizar stats
-//petHunger.textContent = pet.hunger -> es lo mismo pero evitará XSS en el futuro
+//petvitality.textContent = petvitality.innerHTML -> es lo mismo pero evitará XSS en el futuro
 function updateStats() {
-  petHunger.innerHTML = `${pet.hunger}`;
-  petEnergy.innerHTML = `${pet.energy}`;
-  petHappiness.innerHTML = `${pet.happiness}`;
+  if (pet.stability < 50 || pet.connection < 50) pet.vitality -= 5;
+  if (pet.connection < 50) pet.stability -= 5;
+  if (pet.stability < 50) pet.connection -= 5;
+
+  pet.vitality =  Math.min(100, Math.max(0, pet.vitality));
+  pet.stability =  Math.min(100, Math.max(0, pet.stability));
+  pet.connection =  Math.min(100, Math.max(0, pet.connection));
+
+  petVitality.innerHTML = `${pet.vitality}`;
+  petStability.innerHTML = `${pet.stability}`;
+  petConnection.innerHTML = `${pet.connection}`;
   localStorage.setItem("pet", JSON.stringify(pet));
-}
-function checkLife() {
-  if (pet.hunger === 0 || pet.energy === 0 || pet.happiness === 0) {
+
+  if (pet.vitality === 0){
     pet.isAlive = false;
-    alert("Tu criatura ha muerto 💀");
+    //alert("Tu criatura ha muerto 💀");
   }
 }
-
+function updateBarStats(){
+  const total = 100;
+  const vitalityBar = (pet.vitality / total) * 100;
+  const stabilityBar = (pet.stability / total) * 100;
+  const connectionBar  = (pet.connection / total) * 100;
+  petVitality.style.width = vitalityBar + '%';
+  petStability.style.width = stabilityBar + '%';
+  petConnection.style.width = connectionBar + '%';
+}
 // acciones de los botones
-feedBtn.addEventListener("click", () => {
+//onClick() o addEventListener???
+stimulateBtn.addEventListener("click", () => {
   if (!pet.isAlive) {
     return;
   }
-  pet.hunger = Math.min(100, pet.hunger + 10);
+  pet.vitality += 10;
   updateStats();
+  updateBarStats();
 });
 
-playBtn.addEventListener("click", () => {
+doTasksBtn.addEventListener("click", () => {
   if (!pet.isAlive) {
     return;
   }
-  pet.happiness = Math.min(100, pet.happiness + 10);
-  pet.energy = Math.max(0, pet.energy - 5);
+  pet.stability += 10;
   updateStats();
+  updateBarStats();
+
 });
 
-sleepBtn.addEventListener("click", () => {
+connectBtn.addEventListener("click", () => {
   if (!pet.isAlive) {
     return;
   }
-  pet.energy = Math.min(100, pet.energy + 10);
+  pet.connection +=10;
   updateStats();
-});
+  updateBarStats();
 
-updateStats();
+});
 
 setInterval(() => {
-  pet.hunger = Math.max(0, pet.hunger - 1);
-  pet.energy = Math.max(0, pet.energy - 1);
-  pet.happiness = Math.max(0, pet.happiness - 1);
-
+   if (!pet.isAlive) return;
+  pet.stability = Math.max(0, pet.stability - 1);
+  pet.connection = Math.max(0, pet.connection - 2);
   updateStats();
-  checkLife();
-}, 3000); // cada 3 segundos
+  updateBarStats();
+
+}, 5000); // cada 5 segundos
+updateStats();
+updateBarStats();
 
 localStorage.setItem("pet", JSON.stringify(pet)); //guarda 

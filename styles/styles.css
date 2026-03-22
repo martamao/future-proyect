@@ -24,3 +24,41 @@ button {
   margin: 5px;
   font-size: 16px;
 }
+.stats{
+  display: flex;
+  width: 90%;
+  max-width: 600px;
+  height: 25px;
+  background-color: #ddd; /* color neutro para la base */
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 20px auto;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.bar{
+  height: 100%;
+  transition: width 0.5s ease; /* animación suave */
+}
+.vitality { background-color: #f7dc6f; width: 33%; }
+.stability { background-color: #5dade2; width: 33%; }
+.connection { background-color: #58d68d; width: 33%; }
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.actions button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #eee;
+  transition: transform 0.1s;
+}
+
+.actions button:active {
+  transform: scale(0.95);
+}
